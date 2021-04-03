@@ -1,45 +1,77 @@
 .App {
   text-align: center;
-
     height: 100%;
-    width: 100%;
 }
+
 
 body {
-    height: 100%;
-    width: 100%;
-    min-height: 100vh;
     background-image: url("dust_scratches.png");
 }
-
 body,html {
     margin: 0;
     padding: 0;
-}
-* {
-    box-sizing: border-box;
-}
-
-#root {
     height: 100%;
     width: 100%;
 }
+html {
+    box-sizing: border-box;
+}
+
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+
 
 #my-nav {
     padding: 10px 7px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: cadetblue;
+    color: #17a2b8;
     border-bottom: 1px solid #ebebeb;
+    height: 60px;
 }
 
 #main {
     height: 100%;
-    width: 100%;
+    margin: 10px;
+    min-height: calc(100vh - 70px);
+
 }
 
 nav>h2 {
     font-family: 'Alfa Slab One';
     margin-bottom: 0;
+}
+
+#numbers-form {
+    width: 70%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#inputBox {
+    width: 100%;
+    height: 200px;
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 15px;
+    border: 2px solid #17a2b8;
+    background-color: transparent;
+    word-break:break-word;
+}
+
+textarea:focus, input:focus{
+    outline: none;
+}
+
+textarea {
+    resize: none;
+}
+
+#outputBox {
+    width: 100%;
+    height: 200px;
 }
