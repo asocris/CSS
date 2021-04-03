@@ -1,0 +1,45 @@
+.App {
+  text-align: center;
+
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    background-image: url("dust_scratches.png");
+}
+
+body,html {
+    margin: 0;
+    padding: 0;
+}
+* {
+    box-sizing: border-box;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+#my-nav {
+    padding: 10px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: cadetblue;
+    border-bottom: 1px solid #ebebeb;
+}
+
+#main {
+    height: 100%;
+    width: 100%;
+}
+
+nav>h2 {
+    font-family: 'Alfa Slab One';
+    margin-bottom: 0;
+}
