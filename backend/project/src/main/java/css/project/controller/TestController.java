@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
   
   private final TestService testService;
-  
+
   @GetMapping
   public TestResponse readTest() {
     testService.test();
