@@ -24,6 +24,25 @@ public class BigNumberMathOps {
         return 0;
     }
 
+    public static int compare(BigNumber a, long b) {
+        return compare(a, new BigNumber(b));
+    }
+
+    public static BigNumber add(BigNumber a, long b) {
+        BigNumber result = new BigNumber();
+        int newLength = a.getLength() + 20; //20 = max size of a scalar (1 << 64 ~ 1e19, but 20 for safety)
+        result.increaseLength(newLength);
+        long transport = b;
+        for (int i = 0; i < a.getLength() || transport > 0; i++) {
+            if (i < a.getLength())
+                transport += a.getNumber()[i];
+            result.getNumber()[i] = transport % BigNumber.getBASE();
+            transport /= BigNumber.getBASE();
+        }
+        result.adjustLength();
+        return result;
+    }
+
     public static BigNumber add(BigNumber a, BigNumber b) {
         BigNumber result = new BigNumber();
         int newLength = max(a.getLength(), b.getLength()) + 1;
@@ -39,6 +58,10 @@ public class BigNumberMathOps {
         }
         result.adjustLength();
         return result;
+    }
+
+    public static BigNumber substract(BigNumber a, long b) {
+        return substract(a, new BigNumber(b));
     }
 
     public static BigNumber substract(BigNumber a, BigNumber b) {
@@ -62,7 +85,7 @@ public class BigNumberMathOps {
             else {
                 if (result.getNumber()[i] >= transport) {
                     result.getNumber()[i] -= transport;
-                    transport = 0;
+                    break;
                 }
                 else  {
                     result.getNumber()[i] += BigNumber.getBASE();
@@ -70,6 +93,21 @@ public class BigNumberMathOps {
                     transport = 1;
                 }
             }
+        }
+        result.adjustLength();
+        return result;
+    }
+
+    public static BigNumber multiply(BigNumber a, long b) {
+        BigNumber result = new BigNumber();
+        int newLength = a.getLength() * 20 + 1; //20 = max size of a scalar (1 << 64 ~ 1e19, but 20 for safety)
+        result.increaseLength(newLength);
+        long transport = 0;
+        for (int i = 0; i < a.getLength() || transport != 0; i++) {
+            if (i < a.getLength())
+                transport += a.getNumber()[i] * b;
+            result.getNumber()[i] = transport % BigNumber.getBASE();
+            transport /= BigNumber.getBASE();
         }
         result.adjustLength();
         return result;
@@ -93,33 +131,44 @@ public class BigNumberMathOps {
         return result;
     }
 
-    public static BigNumber multiply(BigNumber a, long b) {
-        BigNumber result = new BigNumber();
-        int newLength = a.getLength() * 25 + 1;
-        result.increaseLength(newLength);
-        long transport = 0;
-        for (int i = 0; i < a.getLength() || transport != 0; i++) {
-            if (i < a.getLength())
-                transport += a.getNumber()[i] * b;
-            result.getNumber()[i] = transport % BigNumber.getBASE();
-            transport /= BigNumber.getBASE();
-        }
+    public static BigNumber divideBy2(BigNumber a) {
+        BigNumber result = multiply(a, BigNumber.getBASE() / 2);
+        result.divideByBase();
         result.adjustLength();
         return result;
     }
 
-
-
     public static MutablePair<BigNumber, BigNumber> divide(BigNumber a, BigNumber b) {
-        BigNumber quotient = new BigNumber();
-        BigNumber reminder = new BigNumber();
-        MutablePair<BigNumber, BigNumber> result = new MutablePair<>(quotient, reminder);
-        int newLength = a.getLength() + 1;
-        quotient.increaseLength(newLength);
-        //TODO: WARNING! NOT IMPLEMENTED!
+        if (compare(a, b) == 0)
+            return new MutablePair<>(new BigNumber(1), new BigNumber());
+        if (compare(a, b) < 0)
+            return new MutablePair<>(new BigNumber(0), a);
+        if (compare(b, 0) == 0)
+            throw new ArithmeticAppException("Division by 0");
+        BigNumber l = new BigNumber(1);
+        BigNumber r = new BigNumber(a);
+        while(compare(l, r) < 0) {
+            BigNumber mid = divideBy2(add(l, r));
+            if (compare(multiply(mid, b), a) == 0)
+                return new MutablePair<>(mid, new BigNumber(0));
+            if (compare(multiply(mid, b), a) > 0)
+                r = new BigNumber(substract(mid, 1));
+            else
+                l = new BigNumber(add(mid, 1));
+        }
+        while (compare(multiply(l, b), a) > 0)
+            l = substract(l, 1);
+        BigNumber quotient = new BigNumber(l);
+        BigNumber reminder = new BigNumber(substract(a, multiply(l, b)));
         quotient.adjustLength();
         reminder.adjustLength();
-        return result;
+
+        return new MutablePair<>(quotient, reminder);
+    }
+
+    public static MutablePair<BigNumber, BigNumber> divide(BigNumber a, long b) {
+        //TODO: if needed, implement a better version
+        return divide(a, new BigNumber(b));
     }
 
     public static BigNumber divideQutient(BigNumber a, BigNumber b) {
@@ -130,8 +179,35 @@ public class BigNumberMathOps {
         return divide(a, b).getRight();
     }
 
+    public static BigNumber divideQutient(BigNumber a, long b) {
+        return divide(a, b).getLeft();
+    }
+
+    public static BigNumber divideReminder(BigNumber a, long b) {
+        return divide(a, b).getRight();
+    }
+
     public static BigNumber sqrt(BigNumber a) {
-        return a;
+        if (compare(a, 0) == 0)
+            return a;
+        BigNumber l = new BigNumber(1);
+        BigNumber r = new BigNumber(a);
+        BigNumber tmp;
+        while(compare(l, r) < 0) {
+            BigNumber mid = divideBy2(add(l, r));
+            tmp = multiply(mid, mid);
+            if (compare(tmp, a) == 0)
+                return mid;
+            if (compare(tmp, a) > 0)
+                r = new BigNumber(substract(mid, 1));
+            else
+                l = new BigNumber(add(mid, 1));
+        }
+        while (compare(multiply(l, l), a) > 0)
+            l = substract(l, 1);
+        l.adjustLength();
+
+        return l;
     }
 
     public static BigNumber pow(BigNumber a, BigNumber b) {

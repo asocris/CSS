@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BigNumberTests {
 	@BeforeEach
 	void setup() {
-		BigNumber.updateBASE(10000);
+		BigNumber.updateBASE(10);
 	}
 
 	@Test
@@ -37,7 +37,7 @@ class BigNumberTests {
 
 		nr = new BigNumber(15);
 		int[] nrs = {2, 0, -1};
-		int[] result =  {15000, 15000, 15000};
+		long[] result =  {15000, 15000, 15000};
 		nr.multiplyByBase();
 		assertEquals(nr.toLong(), 150);
 		for (int i = 0; i < result.length; i++) {
@@ -51,6 +51,16 @@ class BigNumberTests {
 		assertEquals(nr.toLong(), 150);
 		for (int i = 0; i < result.length; i++) {
 			nr.multiplyByBase(nrs[i]);
+			assertEquals(nr.toLong(), result[i]);
+		}
+
+		nr = new BigNumber(15000);
+		nrs = new int[]{2, 0, -1, 1};
+		result = new long[]{15, 15, 15, 1};
+		nr.divideByBase();
+		assertEquals(nr.toLong(), 1500);
+		for (int i = 0; i < result.length; i++) {
+			nr.divideByBase(nrs[i]);
 			assertEquals(nr.toLong(), result[i]);
 		}
 	}
@@ -69,9 +79,12 @@ class BigNumberTests {
 	void TestAdd() {
 		long[] n1 = {0, 1000, 0, 99, 99, 12};
 		long[] n2 = {0, 0, 1000, 99, 1, 2};
-		for (int i = 0; i < n1.length; i++)
+		for (int i = 0; i < n1.length; i++) {
 			assertEquals(add(new BigNumber(n1[i]), new BigNumber(n2[i])).toLong(),
 					n1[i] + n2[i]);
+			assertEquals(add(new BigNumber(n1[i]), n2[i]).toLong(),
+					n1[i] + n2[i]);
+		}
 	}
 
 	@Test
@@ -90,14 +103,58 @@ class BigNumberTests {
 	void TestSubstract() {
 		long[] n1 = {0, 100, 15, 15, 100, 101, 101, 101};
 		long[] n2 = {0, 0, 15, 14, 1, 100, 99, 10};
-		for (int i = 0; i < n1.length; i++)
+		for (int i = 0; i < n1.length; i++) {
 			assertEquals(substract(new BigNumber(n1[i]), new BigNumber(n2[i])).toLong(),
 					n1[i] - n2[i]);
+			assertEquals(substract(new BigNumber(n1[i]), n2[i]).toLong(),
+					n1[i] - n2[i]);
+		}
 
 		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
 				() -> substract(new BigNumber(101), new BigNumber(10000)));
 		String expectedMessage = "Substract result Negative";
 		assertTrue(exception.getMessage().contains(expectedMessage));
+	}
+
+	@Test
+	void TestDivision() {
+		long[] n1 = {0, 100, 30, 15, 100, 101, 10001};
+		for (long l : n1)
+			assertEquals(divideBy2(new BigNumber(l)).toLong(), l / 2);
+
+		long[] n2 = {10000, 1, 2, 3, 4, 5, 6, 7, 1000};
+		for (long xx : n1)
+			for (long yy : n2) {
+				assertEquals(divideQutient(new BigNumber(xx), new BigNumber(yy)).toLong(), xx / yy);
+				assertEquals(divideReminder(new BigNumber(xx), new BigNumber(yy)).toLong(), xx % yy);
+			}
+	}
+
+	@Test
+	void TestSqrt() {
+		long[] n1 = {0, 100, 30, 15, 100, 101, 10001};
+		for (long x : n1)
+			assertEquals(sqrt(new BigNumber(x)).toLong(), (long) (Math.sqrt(x)));
+	}
+
+	@Test
+	void StressTest() {
+		BigNumber.updateBASE(1000000000);
+		int numberSize = 100000;
+		BigNumber n1 = new BigNumber("1".repeat(numberSize));
+		long constant = 2;
+		BigNumber n2 = new BigNumber(n1);
+		n1 = multiply(n1, 3);
+		for (int i = 1; i <= 10000; i++) {
+			//divideBy2(n1);
+			multiply(n1, BigNumber.getBASE() / 2);
+			//divide(n1, constant);
+			//substract(n1, constant);
+			//add(n1, n2);
+			//substract(n1, n2);
+			//multiply(n1, n2);
+			//multiply(n1, 15);
+		}
 	}
 
 }

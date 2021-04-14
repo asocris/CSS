@@ -151,6 +151,24 @@ public class BigNumber {
         multiplyByBase(1);
     }
 
+    public void divideByBase(int nr) {
+        if (nr <= 0)
+            return;
+        if (nr >= length) {
+            length = 1;
+            number = new long[length];
+            return;
+        }
+        long[] tmp = number.clone();
+        number = new long[length - nr];
+        length -= nr;
+        System.arraycopy(tmp, nr, number, 0, length);
+    }
+
+    public void divideByBase() {
+        divideByBase(1);
+    }
+
     public long toLong() {
         long result = 0;
         for (int i = length - 1; i >= 0; i--)
@@ -160,9 +178,8 @@ public class BigNumber {
 
     @Override
     public String toString() {
-
         StringBuilder sb = new StringBuilder();
-        for( int i = length - 1; i>=0; i-- )
+        for (int i = length - 1; i >= 0; i--)
             sb.append(number[i]);
         return sb.toString();
     }
