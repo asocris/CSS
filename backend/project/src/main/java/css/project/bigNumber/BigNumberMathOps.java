@@ -130,4 +130,11 @@ public class BigNumberMathOps {
         return divide(a, b).getRight();
     }
 
+    public static BigNumber sqrt(BigNumber a) {
+        return a;
+    }
+
+    public static BigNumber pow(BigNumber a, BigNumber b) {
+       return a;
+    }
 }

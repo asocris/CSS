@@ -160,9 +160,10 @@ public class BigNumber {
 
     @Override
     public String toString() {
-        return "BigNumber{" +
-                "number=" + Arrays.toString(number) +
-                ", length=" + length +
-                '}';
+
+        StringBuilder sb = new StringBuilder();
+        for( int i = length - 1; i>=0; i-- )
+            sb.append(number[i]);
+        return sb.toString();
     }
 }
