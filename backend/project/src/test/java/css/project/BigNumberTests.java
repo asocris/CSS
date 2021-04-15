@@ -214,5 +214,19 @@ class BigNumberTests {
 			System.out.println(pow(n1, constant).getLength());
 		}
 	}
+	@Test
+	void StressTest4()
+	{
+		BigNumber.updateBASE(1000000000);
+		int numberSize = 1000;
+		BigNumber n1 = new BigNumber("1".repeat(numberSize));
+		long constant = 2;
+		BigNumber n2 = new BigNumber(n1);
+		n1 = multiply(n1,300);
+		for(int i = 1; i<=20; i++)
+		{
+			divide(n1,n2);
+		}
+	}
 
 }
