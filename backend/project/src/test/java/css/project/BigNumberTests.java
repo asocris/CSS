@@ -3,6 +3,7 @@ package css.project;
 import css.project.bigNumber.BigNumber;
 import css.project.exception.custom.ArithmeticAppException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static css.project.bigNumber.BigNumberMathOps.*;
@@ -122,7 +123,7 @@ class BigNumberTests {
 		for (long l : n1)
 			assertEquals(divideBy2(new BigNumber(l)).toLong(), l / 2);
 
-		long[] n2 = {10000, 1, 2, 3, 4, 5, 6, 7, 1000};
+		long[] n2 = {10000, 1, 2, 3, 4, 5, 6, 7, 1000, 100};
 		for (long xx : n1)
 			for (long yy : n2) {
 				assertEquals(divideQutient(new BigNumber(xx), new BigNumber(yy)).toLong(), xx / yy);
@@ -138,6 +139,19 @@ class BigNumberTests {
 	}
 
 	@Test
+	void TestPow() {
+		long[] n1 = {0, 1, 100, 30, 15, 100, 101};
+		long[] n2 = {1, 1, 2, 5, 7};
+		for (long xx : n1)
+			for (long yy : n2) {
+				assertEquals(pow(new BigNumber(xx), new BigNumber(yy)).toLong(), Math.pow(xx, yy));
+				assertEquals(pow(new BigNumber(xx), yy).toLong(), Math.pow(xx, yy));
+			}
+		assertEquals(pow(new BigNumber(100), 0).toLong(), Math.pow(100, 0));
+	}
+
+	@Test
+	@Disabled
 	void StressTest() {
 		BigNumber.updateBASE(1000000000);
 		int numberSize = 100000;

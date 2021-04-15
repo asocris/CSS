@@ -28,6 +28,16 @@ public class BigNumberMathOps {
         return compare(a, new BigNumber(b));
     }
 
+    public static boolean isImpar(BigNumber a) {
+        //assuming that the base is pow(10, something)
+        return ((a.getNumber()[0] % 2) == 1);
+    }
+
+    public static boolean isImpar(long a) {
+        //don't ask why this is here...I just need it
+        return ((a % 2) == 1);
+    }
+
     public static BigNumber add(BigNumber a, long b) {
         BigNumber result = new BigNumber();
         int newLength = a.getLength() + 20; //20 = max size of a scalar (1 << 64 ~ 1e19, but 20 for safety)
@@ -132,6 +142,7 @@ public class BigNumberMathOps {
     }
 
     public static BigNumber divideBy2(BigNumber a) {
+        //assuming that the base is multiple of 2
         BigNumber result = multiply(a, BigNumber.getBASE() / 2);
         result.divideByBase();
         result.adjustLength();
@@ -206,11 +217,60 @@ public class BigNumberMathOps {
         while (compare(multiply(l, l), a) > 0)
             l = substract(l, 1);
         l.adjustLength();
-
         return l;
     }
 
     public static BigNumber pow(BigNumber a, BigNumber b) {
-       return a;
+        if (compare(b, 0) == 0)
+            if (compare(a, 0) == 0)
+                throw new ArithmeticAppException("Substract result Negative");
+            else
+                return new BigNumber(1);
+
+        if (compare(a, 2) < 0)
+            return new BigNumber(a);
+        // a ^ b = a if {a = 0 (and b != 0))} or {a = 1}
+        if (compare(b, 1) == 0)
+            return new BigNumber(a);
+        // a ^ 1 = a
+        BigNumber tmp = new BigNumber(a);
+        BigNumber result = new BigNumber(1);
+        BigNumber bTemp = new BigNumber(b);
+        while(compare(bTemp, 0) > 0) {
+            if (isImpar(bTemp)) {
+                result = multiply(result, tmp);
+            }
+            bTemp = divideBy2(bTemp);
+            tmp = multiply(tmp, tmp);
+        }
+       return result;
+    }
+
+    public static BigNumber pow(BigNumber a, long b) {
+        if (b == 0)
+            if (compare(a, 0) == 0)
+                throw new ArithmeticAppException("Substract result Negative");
+            else
+                return new BigNumber(1);
+        // 0 ^ 0 = anything ^ 0 = 1
+
+        if (compare(a, 2) < 0)
+            return new BigNumber(a);
+        // a ^ b = a if {a = 0 (and b != 0))} or {a = 1}
+
+        if (b == 1)
+            return new BigNumber(a);
+        // a ^ 1 = a
+
+        BigNumber tmp = new BigNumber(a);
+        BigNumber result = new BigNumber(1);
+        while (b > 0) {
+            if (isImpar(b)) {
+                result = multiply(result, tmp);
+            }
+            b >>= 1;
+            tmp = multiply(tmp, tmp);
+        }
+        return result;
     }
 }
