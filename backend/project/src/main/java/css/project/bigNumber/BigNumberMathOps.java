@@ -229,9 +229,8 @@ public class BigNumberMathOps {
             }
             else {
                 mid.increment();
-                r = new BigNumber(mid);
+                l = new BigNumber(mid);
             }
-                l = new BigNumber(add(mid, 1));
         }
         while (compare(multiply(l, l), a) > 0)
             l = substract(l, 1);

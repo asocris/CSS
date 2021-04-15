@@ -142,12 +142,14 @@ class BigNumberTests {
 			for (long yy : n2) {
 				assertEquals(divideQutient(new BigNumber(xx), new BigNumber(yy)).toLong(), xx / yy);
 				assertEquals(divideReminder(new BigNumber(xx), new BigNumber(yy)).toLong(), xx % yy);
+				assertEquals(divideQutient(new BigNumber(xx), yy).toLong(), xx / yy);
+				assertEquals(divideReminder(new BigNumber(xx), yy).toLong(), xx % yy);
 			}
 	}
 
 	@Test
 	void TestSqrt() {
-		long[] n1 = {0, 100, 30, 15, 100, 101, 10001};
+		long[] n1 = {0, 100, 30, 15, 100, 101, 121, 25, 100000000, 10001};
 		for (long x : n1)
 			assertEquals(sqrt(new BigNumber(x)).toLong(), (long) (Math.sqrt(x)));
 	}
@@ -162,6 +164,7 @@ class BigNumberTests {
 				assertEquals(pow(new BigNumber(xx), yy).toLong(), Math.pow(xx, yy));
 			}
 		assertEquals(pow(new BigNumber(100), 0).toLong(), Math.pow(100, 0));
+		assertEquals(pow(new BigNumber(100), new BigNumber(0)).toLong(), Math.pow(100, 0));
 	}
 
 	@Test
@@ -214,7 +217,9 @@ class BigNumberTests {
 			System.out.println(pow(n1, constant).getLength());
 		}
 	}
+
 	@Test
+	@Disabled
 	void StressTest4()
 	{
 		BigNumber.updateBASE(1000000000);
