@@ -1,6 +1,7 @@
 package css.project;
 
 import css.project.ExpressionEvaluation.ExpressionEvaluation;
+import css.project.XMLparser.XMLParser;
 import css.project.bigNumber.BigNumber;
 import org.junit.jupiter.api.Test;
 
@@ -23,5 +24,29 @@ public class ExpressionTest {
 
 
         System.out.println(ExpressionEvaluation( ComputePostFixPolishNotation(expression), values ));
+    }
+
+    @Test
+    void run2()
+    {
+        String expression = "<expression>\n" +
+                "\t\t<variable> a </variable>\n" +
+                "\t\t  <operation> * </operation>\n" +
+                "\t\t<variable> b </variable>\n" +
+                "\t\t<operation> + </operation>\n" +
+                "\t\t<variable> c </variable>\n" +
+                "\t</expression>\n" +
+                "\t\t<operation> ^ </operation>\n" +
+                "\t\t<variable> (0.5) </variable>\n" +
+                "\t\t<operation> + </operation>\n" +
+                "\t\t<expression>\n" +
+                "\t\t<operation> / </operation>\n" +
+                "\t\t<variable> (0.5) </variable>\n" +
+                "\t\t<operation> - </operation>\n" +
+                "\t\t<variable> d </variable>\n" +
+                "\t\t<expression> </expression>\n" +
+                "\t\t</expression>\n" +
+                "\t<operation> + </operation>";
+        System.out.println(XMLParser.GetExpressionFromXML(expression));
     }
 }
