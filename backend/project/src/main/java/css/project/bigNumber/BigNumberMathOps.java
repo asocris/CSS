@@ -6,11 +6,21 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import static java.lang.Integer.max;
 
 public class BigNumberMathOps {
+
     public static int compare(BigNumber a, BigNumber b) {
-        BigNumber tempa = new BigNumber(a);
-        BigNumber tempb = new BigNumber(b);
-        tempa.adjustLength();
-        tempb.adjustLength();
+        BigNumber tempa, tempb;
+        if (a.getNumber()[a.getLength() - 1] != 0)
+            tempa = a;
+        else {
+            tempa = new BigNumber(a);
+            tempa.adjustLength();
+        }
+        if (b.getNumber()[b.getLength() - 1] != 0)
+            tempb = b;
+        else {
+            tempb = new BigNumber(b);
+            tempb.adjustLength();
+        }
         if (tempa.getLength() != tempb.getLength()) {
             if (tempa.getLength() > tempb.getLength())
                 return 1;
@@ -162,13 +172,17 @@ public class BigNumberMathOps {
             BigNumber mid = divideBy2(add(l, r));
             if (compare(multiply(mid, b), a) == 0)
                 return new MutablePair<>(mid, new BigNumber(0));
-            if (compare(multiply(mid, b), a) > 0)
-                r = new BigNumber(substract(mid, 1));
-            else
-                l = new BigNumber(add(mid, 1));
+            if (compare(multiply(mid, b), a) > 0) {
+                mid.decrement();
+                r = new BigNumber(mid);
+            }
+            else {
+                mid.increment();
+                l = new BigNumber(mid);
+            }
         }
         while (compare(multiply(l, b), a) > 0)
-            l = substract(l, 1);
+            l.decrement();
         BigNumber quotient = new BigNumber(l);
         BigNumber reminder = new BigNumber(substract(a, multiply(l, b)));
         quotient.adjustLength();
@@ -209,9 +223,14 @@ public class BigNumberMathOps {
             tmp = multiply(mid, mid);
             if (compare(tmp, a) == 0)
                 return mid;
-            if (compare(tmp, a) > 0)
-                r = new BigNumber(substract(mid, 1));
-            else
+            if (compare(tmp, a) > 0) {
+                mid.decrement();
+                r = new BigNumber(mid);
+            }
+            else {
+                mid.increment();
+                r = new BigNumber(mid);
+            }
                 l = new BigNumber(add(mid, 1));
         }
         while (compare(multiply(l, l), a) > 0)

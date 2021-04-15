@@ -34,7 +34,6 @@ class BigNumberTests {
 		nr.adjustLength();
 		assertEquals(nr.toLong(),
 				0);
-		System.out.println(nr);
 
 		nr = new BigNumber(15);
 		int[] nrs = {2, 0, -1};
@@ -63,6 +62,21 @@ class BigNumberTests {
 		for (int i = 0; i < result.length; i++) {
 			nr.divideByBase(nrs[i]);
 			assertEquals(nr.toLong(), result[i]);
+		}
+
+		long[] n1 = 	{9, 99, 999, 9999, 123, 100, 2, 0, 1, 122, 2};
+		for (long it : n1)  {
+			BigNumber x = new BigNumber(it);
+			x.increment();
+			assertEquals(x.toLong(), it + 1);
+		}
+
+		n1 = new long[]{20, 1, 10, 200, 999, 100, 1000, 10000000000L, 9, 99, 999, 9999, 123, 100, 2, 1, 1, 122, 2};
+		for (long it : n1)  {
+			//System.out.println(it);
+			BigNumber x = new BigNumber(it);
+			x.decrement();
+			assertEquals(x.toLong(), it - 1);
 		}
 	}
 
@@ -119,11 +133,11 @@ class BigNumberTests {
 
 	@Test
 	void TestDivision() {
-		long[] n1 = {0, 100, 30, 15, 100, 101, 10001};
+		long[] n1 = {100, 0, 100, 30, 15, 100, 101, 10001};
 		for (long l : n1)
 			assertEquals(divideBy2(new BigNumber(l)).toLong(), l / 2);
 
-		long[] n2 = {10000, 1, 2, 3, 4, 5, 6, 7, 1000, 100};
+		long[] n2 = {4, 10000, 1, 2, 3, 4, 5, 6, 7, 1000, 100};
 		for (long xx : n1)
 			for (long yy : n2) {
 				assertEquals(divideQutient(new BigNumber(xx), new BigNumber(yy)).toLong(), xx / yy);
@@ -153,21 +167,51 @@ class BigNumberTests {
 	@Test
 	@Disabled
 	void StressTest() {
+
 		BigNumber.updateBASE(1000000000);
-		int numberSize = 100000;
+		int numberSize = 1000;
 		BigNumber n1 = new BigNumber("1".repeat(numberSize));
 		long constant = 2;
 		BigNumber n2 = new BigNumber(n1);
-		n1 = multiply(n1, 3);
-		for (int i = 1; i <= 10000; i++) {
+		n1 = multiply(n1, 300);
+		for (int i = 1; i <= 20; i++) {
 			//divideBy2(n1);
-			multiply(n1, BigNumber.getBASE() / 2);
-			//divide(n1, constant);
+			//multiply(n1, BigNumber.getBASE() / 2);
+			divide(n1, n2);
 			//substract(n1, constant);
 			//add(n1, n2);
 			//substract(n1, n2);
 			//multiply(n1, n2);
 			//multiply(n1, 15);
+		}
+	}
+
+	@Test
+	@Disabled
+	void StressTest2() {
+
+		BigNumber.updateBASE(1000000000);
+		int numberSize = 1;
+		BigNumber n1 = new BigNumber("1".repeat(numberSize));
+		long constant = 50000;
+		BigNumber n2 = new BigNumber(constant);
+		n1 = multiply(n1, 300);
+		for (int i = 1; i <= 5; i++) {
+			System.out.println(pow(n1, n2).getLength());
+		}
+	}
+
+	@Test
+	@Disabled
+	void StressTest3() {
+
+		BigNumber.updateBASE(1000000000);
+		int numberSize = 1;
+		BigNumber n1 = new BigNumber("1".repeat(numberSize));
+		long constant = 50000;
+		n1 = multiply(n1, 300);
+		for (int i = 1; i <= 5; i++) {
+			System.out.println(pow(n1, constant).getLength());
 		}
 	}
 

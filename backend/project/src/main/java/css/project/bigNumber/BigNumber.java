@@ -119,6 +119,71 @@ public class BigNumber {
         System.arraycopy(tmp, 0, number, 0, length);
     }
 
+    public void increment() {
+        int position = 0;
+        while (position < length) {
+            if (number[position] != BASE - 1)
+                break;
+            position++;
+        }
+        if (position != length)
+            number[position]++;
+        else {
+            //disclamer : the numbers are reversed (like are in the real)
+            // meaning they are read (as "digits" for big number) from right to left
+            // 123 456 is the real number 456123
+            //in this case the number is like 9999 9999 9999 .... 9999
+            //so + 1 would be 0000 0000 .....0000 1
+            length++;
+            number = new long[length];
+            number[length - 1] = 1;
+        }
+    }
+
+    public void decrement() {
+        int position = 0;
+        while (position < length) {
+            if (number[position] != 0)
+                break;
+            position++;
+        }
+        if (position < length - 1) {
+            number[position]--;
+            position--;
+            while (position >= 0) {
+                number[position] = BASE - 1;
+                position--;
+            }
+        }
+        else {
+            //disclamer : the numbers are reversed (like are in the real)
+            // meaning they are read (as "digits" for big number) from right to left
+            // 123 456 is the real number 456123
+            //in this case the number is like 0000 0000 .....0000 1
+            //so - 1 would be 9999 9999 9999 .... 9999
+
+            if (number[length - 1] == 0)
+                throw new ArithmeticAppException("Decrementation of number 0 detected. Error!");
+            if (number[length - 1] == 1) {
+                length--;
+                if (length == 0) {
+                    length = 1;
+                    number[0] = 0;
+                }
+                else {
+                    number = new long[length];
+                    for (int i = 0; i < length; i++)
+                        number[i] = BASE - 1;
+                }
+            }
+            else {
+                for (int i = 0; i < length - 1; i++)
+                    number[i] = BASE - 1;
+                number[length - 1]--;
+            }
+        }
+    }
+
     public void multiplyByBase(int nr) {
         if (nr <= 0)
             return;
