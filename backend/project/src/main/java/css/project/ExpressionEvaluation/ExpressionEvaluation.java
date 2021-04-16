@@ -12,17 +12,15 @@ import static css.project.bigNumber.BigNumberMathOps.*;
 import static java.lang.Integer.min;
 
 public class ExpressionEvaluation {
-    private static List<String> ParseInput(String inputExpression)
-    {
+
+    private static List<String> parseInput(String inputExpression) {
         List<String> result = new ArrayList<String>();
         int position = 0;
 
-        while( position < inputExpression.length())
-        {
+        while ( position < inputExpression.length()) {
             result.add( String.valueOf( inputExpression.charAt(position) ) );
 
-            if( inputExpression.charAt(position) == '^' )
-            {
+            if ( inputExpression.charAt(position) == '^' ) {
                 position++;
                 int copyPosition = position;
                 boolean isSqrtCase = inputExpression.charAt( copyPosition ) == '('
@@ -31,44 +29,37 @@ public class ExpressionEvaluation {
                         && inputExpression.charAt( copyPosition + 3 ) == '5'
                         && inputExpression.charAt( copyPosition + 4 ) == ')';
 
-                if( isSqrtCase )
-                {
+                if ( isSqrtCase ) {
                     StringBuilder sb = new StringBuilder();
                     for(int i = 0; i <= 4; i++)
                         sb.append( inputExpression.charAt( copyPosition + i ) );
                     result.add( sb.toString() );
                     position = copyPosition + 5;
                 }
-                else
-                    continue;
             }
             else
-            {
                 position++;
-            }
         }
         return result;
     }
 
-    public static boolean IsVariable ( String input )
-    {
-        if( input.length() == 1
+    public static boolean isVariable (String input) {
+        if (input.length() == 1
                 && (input.charAt(0) >= 'a' && input.charAt(0) <= 'z'
-                || input.charAt(0) >= 'A' && input.charAt(0) <= 'Z'))
+                    || input.charAt(0) >= 'A' && input.charAt(0) <= 'Z'))
             return true;
 
-        if( input.length() > 1) //sqrt variabile (0.5) case
+        if (input.length() > 1) //sqrt variabile (0.5) case
             return true;
 
         return false;
     }
 
-    public static List<String> ComputePostFixPolishNotation(String inputExpression)
-    {
-        List<String> inputCharacters = ParseInput(inputExpression);
-        List<String> postFix = new ArrayList<String>();
-        Stack<String> stack = new Stack<String>();
-        Hashtable<String, Integer> opOrder = new Hashtable<String, Integer>();
+    public static List<String> computePostFixPolishNotation(String inputExpression) {
+        List<String> inputCharacters = parseInput(inputExpression);
+        List<String> postFix = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        Hashtable<String, Integer> opOrder = new Hashtable<>();
 
         opOrder.put("^",3);
         opOrder.put("*",2);
@@ -78,27 +69,24 @@ public class ExpressionEvaluation {
 
         int position = 0;
 
-        while ( position < inputCharacters.size() )
-        {
+        while ( position < inputCharacters.size() ) {
             String element = inputCharacters.get(position);
 
-            if( IsVariable(element) )
-            {
+            if (isVariable(element) ) {
                 postFix.add(element);
                 position++;
                 continue;
             }
 
-            if( element.equals("(") ) {
+            if (element.equals("(") ) {
                 stack.add(element);
                 position++;
                 continue;
             }
 
-            if( element.equals(")") ){
+            if (element.equals(")") ) {
 
-                while ( !stack.peek().equals("(") )
-                {
+                while ( !stack.peek().equals("(") ) {
                     String op = stack.pop();
                     postFix.add(op);
                 }
@@ -107,13 +95,13 @@ public class ExpressionEvaluation {
                 position++;
                 continue;
             }
-            if(element.equals("+")
+            if (element.equals("+")
                     || element.equals("-")
                     || element.equals("*")
                     || element.equals("/")
                     || element.equals("^")) {
 
-                if( !stack.empty() && !stack.peek().equals("(") )
+                if ( !stack.empty() && !stack.peek().equals("(") )
                     while ( !stack.empty() && opOrder.get(element) <= opOrder.get(stack.peek()) ) {
                         postFix.add(stack.pop());
                         if(stack.empty()) break;
@@ -125,80 +113,68 @@ public class ExpressionEvaluation {
                 position++;
             }
         }
-        while( !stack.empty() )
+        while ( !stack.empty() )
             postFix.add( stack.pop() );
 
         return postFix;
     }
 
-    public static boolean IsBigNumber( String value)
-    {
-        for (int i = 0; i < min(value.length(),2); i++ )
-            if( !(value.charAt(i) <= '9' &&  value.charAt(i) >= '0') )
-                return false;
+//    public static boolean isBigNumber( String value) {
+//        for (int i = 0; i < min(value.length(),2); i++ )
+//            if ( !(value.charAt(i) <= '9' &&  value.charAt(i) >= '0') )
+//                return false;
+//        return true;
+//    }
 
-        return true;
-    }
-
-    public static BigNumber ExpressionEvaluation( List<String> expression, Hashtable<String,BigNumber> values )
-    {
+    public static BigNumber expressionEvaluation( List<String> expression, Hashtable<String, BigNumber> values ) {
         BigNumber result = new BigNumber();
-        Stack<String> stack = new Stack<String>();
+        Stack<String> stack = new Stack<>();
         int position = 0;
 
-        while ( position < expression.size() )
-        {
-            if(IsVariable( expression.get(position) ) && !expression.get(position).equals("(0.5)"))
+        while ( position < expression.size() ) {
+            if (isVariable( expression.get(position) ) && !expression.get(position).equals("(0.5)"))
                 stack.push(values.get(expression.get(position)).toString());
             else
-                if (IsVariable( expression.get(position) ))
-                stack.push( expression.get(position) );
-            else
-            {
-                String var1 = stack.pop();
-                String var2 = stack.pop();
-
-                BigNumber var2Value = new BigNumber(var2);
-                if( var1.equals("(0.5)") )
-                {
-                    result = sqrt(var2Value);
-                }
+                if (isVariable( expression.get(position) )) // remaining is (0.5)
+                    stack.push( expression.get(position) );
                 else {
+                    String var2 = stack.pop();
+                    String var1 = stack.pop();
+
                     BigNumber var1Value = new BigNumber(var1);
-
-                    switch (expression.get(position)) {
-                        case "+":
-                            result = add(var1Value, var2Value);
-                            break;
-                        case "-":
-                            result = substract(var2Value, var1Value);
-                            break;
-                        case "*":
-                            result = multiply(var1Value, var2Value);
-                            break;
-                        case "^":
-                            result = pow(var2Value, var1Value);
-                            break;
-                        case "/":
-                            result = divideQutient(var2Value, var1Value);
-                            break;
-                        default:
-                            break;
-
+                    if (var2.equals("(0.5)")) {
+                        result = sqrt(var1Value);
+                        System.out.println("sqrt(" + var1Value + ")");
                     }
+                    else {
+                        BigNumber var2Value = new BigNumber(var2);
 
+                        switch (expression.get(position)) {
+                            case "+":
+                                result = add(var1Value, var2Value);
+                                break;
+                            case "-":
+                                result = substract(var1Value, var2Value);
+                                break;
+                            case "*":
+                                result = multiply(var1Value, var2Value);
+                                break;
+                            case "^":
+                                result = pow(var1Value, var2Value);
+                                break;
+                            case "/":
+                                result = divideQutient(var1Value, var2Value);
+                                break;
+                            default:
+                                break;
+                        }
+                        System.out.println(var1Value + " " + expression.get(position) + " " + var2Value);
+                    }
                     stack.push( result.toString() );
-                    System.out.println(var1 + " = " + var1Value + " , " + var2 + " = " + var2Value
-                            + " operator = " + expression.get(position) );
-
+                    System.out.println("Result = " + result);
                 }
-
-                System.out.println("Result = " + result);
-            }
             position++;
         }
-
-     return new BigNumber(stack.pop());
-
+        return new BigNumber(stack.pop());
     }
 }

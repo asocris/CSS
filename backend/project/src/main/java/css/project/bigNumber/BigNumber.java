@@ -2,18 +2,13 @@ package css.project.bigNumber;
 
 import css.project.exception.custom.ArithmeticAppException;
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Arrays;
 
 @Getter
-@Setter
 public class BigNumber {
 
     @Getter
     private static long BASE = 10;
 
-    @Getter
     private static int nrDigitsPerPosition = 1;
     //IMPORTANT NOTE : IF BASE IS CHANGED, ALL NUMBERS ARE INVALIDATED
     //IMPORTANT NOTE 2 : FOR NOW IT ONLY WORKS WITH POWERS OF 10
@@ -23,13 +18,19 @@ public class BigNumber {
     // be serious, no 1 will even touch this constant beside the base value of 10
 
     public static void updateBASE(long newBASE) {
+        if (newBASE < 10) {
+            BASE = 10;
+            System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 10");
+            nrDigitsPerPosition = 1;
+            return;
+        }
         BASE = newBASE;
         nrDigitsPerPosition = 0;
         for (long i = BASE; i > 0; i /= 10) {
             if (i % 10 != 0 && i != 1) {
                 BASE = 10;
                 System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 10");
-                nrDigitsPerPosition = 0;
+                nrDigitsPerPosition = 1;
                 return;
             }
             nrDigitsPerPosition++;
@@ -76,7 +77,7 @@ public class BigNumber {
         for (int i = s.length() - 1; i >= 0; i--) {
             temp += (s.charAt(i) - '0') * power10;
             power10 *= 10;
-            if (temp > BASE) {
+            if (power10 > BASE) {
                 number[currentPosition] = temp % BASE;
                 currentPosition++;
                 power10 = 10;
@@ -243,9 +244,26 @@ public class BigNumber {
 
     @Override
     public String toString() {
+        boolean is0 = true;
+        for (int i = 0; i < length; i++)
+            if (number[i] != 0) {
+                is0 = false;
+                break;
+            }
+        if (is0) {
+            return "0";
+        }
+
         StringBuilder sb = new StringBuilder();
-        for (int i = length - 1; i >= 0; i--)
-            sb.append(number[i]);
+        if (number[length - 1] != 0)
+            sb.append(number[length - 1]);
+        for (int i = length - 2; i >= 0; i--)
+            if (number[i] != 0) {
+                sb.append("0".repeat(nrDigitsPerPosition - ((int) (Math.log10(number[i]) + 1)))).append(number[i]);
+            }
+            else
+                sb.append("0".repeat(nrDigitsPerPosition));
+
         return sb.toString();
     }
 }

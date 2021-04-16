@@ -17,13 +17,29 @@ class BigNumberTests {
 
 	@Test
 	void TestConstructor() {
+		BigNumber.updateBASE(2);
+		BigNumber.updateBASE(15);
 		BigNumber.updateBASE(1000);
-		String[] nr1 = {"123456789", "0", "9999", "00010000"};
+		String[] nr1 = {"31600", "123456789", "210", "0", "9999", "00010000", "32769", "100", "10", "50"};
 		BigNumber nr;
 		for (String s : nr1) {
 			nr = new BigNumber(s);
-			System.out.println(nr);
 			assertEquals(nr.toLong(), Long.parseLong(s));
+			nr = new BigNumber(Long.parseLong(s));
+			assertEquals(nr.toLong(), Long.parseLong(s));
+		}
+	}
+
+	@Test
+	void TestToString() {
+		BigNumber.updateBASE(1000);
+		String[] nr1 = {"32769", "31600", "123456789", "210", "0", "9999", "10000", "32769", "10010010000001", "10", "50"};
+		BigNumber nr;
+		for (String s : nr1) {
+			nr = new BigNumber(s);
+			assertEquals(nr.toString().compareTo(s), 0);
+			nr = new BigNumber(Long.parseLong(s));
+			assertEquals(nr.toString().compareTo(s), 0);
 		}
 	}
 
