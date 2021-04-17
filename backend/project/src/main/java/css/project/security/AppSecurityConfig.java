@@ -18,9 +18,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
   private final CorsFilter corsFilter;
   
   @Override
-  protected void configure(HttpSecurity http) {
+  protected void configure(HttpSecurity http) throws Exception{
     SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
     
-    http.addFilter(corsFilter);
+    http.addFilter(corsFilter).csrf().disable();
   }
 }
