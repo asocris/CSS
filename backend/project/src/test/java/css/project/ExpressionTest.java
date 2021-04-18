@@ -1,5 +1,6 @@
 package css.project;
 
+import css.project.Utils.Tuple;
 import css.project.XMLparser.XMLParser;
 import css.project.bigNumber.BigNumber;
 import css.project.exception.custom.ArithmeticAppException;
@@ -96,9 +97,23 @@ public class ExpressionTest {
                 "\t<operation> ^ </operation>\n" +
                 "\t<variable> (0.5) </variable>\n" +
                 "\t<operation> + </operation>\n" +
-                "\t<variable> d </variable>\n";
+                "\t<variable> d </variable>\n" +
+                "<variableValue> a </variableValue>" +
+                "<value>134454</value>" +
+                "   <variableValue> b </variableValue>" +
+                "       <value> 23412 </value>" +
+                "<variableValue> d  " +
+                "</variableValue>" +
+                "<value> 2312321553235235 " +
+                "</value>";
         System.out.println(expression);
         System.out.println("-------");
-        System.out.println(XMLParser.GetExpressionFromXML(expression));
+        Tuple<String,Hashtable<String,BigNumber>> result =  XMLParser.GetExpressionFromXML(expression);
+        System.out.println(result.first);
+
+        for (String key: result.second.keySet()) {
+            System.out.println(key + " = " + result.second.get(key)  );
+
+        }
     }
 }
