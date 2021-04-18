@@ -1,6 +1,7 @@
 package css.project.ExpressionEvaluation;
 
 import css.project.bigNumber.BigNumber;
+import css.project.exception.custom.ParsingException;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class ExpressionEvaluation {
         return false;
     }
 
-    public static List<String> computePostFixPolishNotation(String inputExpression) {
+    public static List<String> computePostFixPolishNotation(String inputExpression) throws Exception {
         List<String> inputCharacters = parseInput(inputExpression);
         List<String> postFix = new ArrayList<>();
         Stack<String> stack = new Stack<>();
@@ -75,28 +76,20 @@ public class ExpressionEvaluation {
 
             if (isVariable(element) ) {
                 postFix.add(element);
-                position++;
-                continue;
             }
 
-            if (element.equals("(") ) {
+            else if (element.equals("(") ) {
                 stack.add(element);
-                position++;
-                continue;
             }
 
-            if (element.equals(")") ) {
-
+            else if (element.equals(")") ) {
                 while ( !stack.peek().equals("(") ) {
                     String op = stack.pop();
                     postFix.add(op);
                 }
                 stack.pop();
-
-                position++;
-                continue;
             }
-            if (element.equals("+")
+            else if (element.equals("+")
                     || element.equals("-")
                     || element.equals("*")
                     || element.equals("/")
@@ -111,8 +104,9 @@ public class ExpressionEvaluation {
                     }
 
                 stack.add(element);
-                position++;
             }
+            else throw new ParsingException("Imput expresion has invalid character: " + element + " at position: " + (position + 1));
+            position++;
         }
         while ( !stack.empty() )
             postFix.add( stack.pop() );
@@ -127,7 +121,7 @@ public class ExpressionEvaluation {
 //        return true;
 //    }
 
-    public static BigNumber expressionEvaluation( List<String> expression, Hashtable<String, BigNumber> values ) {
+    public static BigNumber expressionEvaluation( List<String> expression, Hashtable<String, BigNumber> values, boolean isXML) {
         BigNumber result = new BigNumber();
         Stack<String> stack = new Stack<>();
         response = new StringBuilder();
@@ -146,7 +140,11 @@ public class ExpressionEvaluation {
                     BigNumber var1Value = new BigNumber(var1);
                     if (var2.equals("(0.5)")) {
                         result = sqrt(var1Value);
-                        response.append("sqrt(").append(var1Value).append(")").append("\n");
+                        if (!isXML)
+                            response.append("sqrt(").append(var1Value).append(")").append("\n");
+                        else
+                            response.append("<operation>sqrt<\\operation>\n<value>")
+                                    .append(var1Value).append("<\\value>").append("\n");
                         System.out.println("sqrt(" + var1Value + ")");
                     }
                     else {
@@ -171,12 +169,21 @@ public class ExpressionEvaluation {
                             default:
                                 break;
                         }
-                        response.append(var1Value).append(" ").append(expression.get(position))
+                        if (!isXML)
+                            response.append(var1Value).append(" ").append(expression.get(position))
                                 .append(" ").append(var2Value).append("\n");
+                        else
+                            response.append("<value>").append(var1Value).append("<\\value>\n")
+                                    .append("<operation>").append(expression.get(position)).append("<\\operation>\n")
+                                    .append("<value>").append(var2Value).append("<\\value>\n");
+
                         System.out.println(var1Value + " " + expression.get(position) + " " + var2Value);
                     }
                     stack.push( result.toString() );
-                    response.append("Result = ").append(result).append("\n");
+                    if (!isXML)
+                        response.append("Result = ").append(result).append("\n");
+                    else
+                        response.append("<result>").append(result).append("<\\result>\n\n");
 
                     System.out.println("Result = " + result);
                 }

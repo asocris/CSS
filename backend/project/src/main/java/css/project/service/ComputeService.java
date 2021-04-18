@@ -17,7 +17,7 @@ public class ComputeService {
         Hashtable<String, BigNumber> variables2 = new Hashtable<>();
         for (String s : variables.keySet())
           variables2.put(s, new BigNumber(variables.get(s)));
-        BigNumber n = ExpressionEvaluation.expressionEvaluation(computePostFixPolishNotation(expression), variables2);
+        BigNumber n = ExpressionEvaluation.expressionEvaluation(computePostFixPolishNotation(expression), variables2, false);
         System.out.println(n);
         return ExpressionEvaluation.getResponse().toString();
       } catch (Exception e) {

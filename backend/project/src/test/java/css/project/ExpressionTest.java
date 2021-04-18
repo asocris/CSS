@@ -1,9 +1,12 @@
 package css.project;
 
+import css.project.ExpressionEvaluation.ExpressionEvaluation;
 import css.project.Utils.Tuple;
 import css.project.XMLparser.XMLParser;
 import css.project.bigNumber.BigNumber;
+import css.project.exception.AppException;
 import css.project.exception.custom.ArithmeticAppException;
+import css.project.exception.custom.ParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExpressionTest {
     @BeforeEach
     void Setup(){
-        BigNumber.updateBASE(100000);
+        BigNumber.updateBASE(10);
     }
 
     @Test
-    void runCorrectExpresions() {
+    void runCorrectExpresions() throws Exception {
         String expression = "a+((b)^(c))-((d+e))^(0.5)*(f)-(f/(g+h))";
         Hashtable<String, BigNumber> values = new Hashtable<>();
         long a = 1, b = 2, c = 15, d = 100000, e = 23, f = 100, g = 9, h = 1;
@@ -33,7 +36,7 @@ public class ExpressionTest {
         values.put("g", new BigNumber(g));
         values.put("h", new BigNumber(h));
 
-        assertEquals(expressionEvaluation(computePostFixPolishNotation(expression), values).toLong(),
+        assertEquals(expressionEvaluation(computePostFixPolishNotation(expression), values, false).toLong(),
               a + (long)(Math.pow(b, c)) - (long)(Math.sqrt(d + e)) * f - ((f / (g + h))));
 
         expression = "a+e*b^c-d^(0.5)";
@@ -45,7 +48,7 @@ public class ExpressionTest {
         values.put("e", new BigNumber(e));
         System.out.println("-----------------");
         assertEquals(compare(
-                expressionEvaluation(computePostFixPolishNotation(expression), values),
+                expressionEvaluation(computePostFixPolishNotation(expression), values, false),
                 new BigNumber("5" + "0".repeat(996) + "1022")
         ), 0);
 
@@ -66,7 +69,7 @@ public class ExpressionTest {
         values.put("h",new BigNumber(h));
 
         ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-                () -> expressionEvaluation(computePostFixPolishNotation(expression1), values));
+                () -> expressionEvaluation(computePostFixPolishNotation(expression1), values, false));
         String expectedMessage = "Substract result Negative";
         assertTrue(exception.getMessage().contains(expectedMessage));
 
@@ -78,15 +81,13 @@ public class ExpressionTest {
         values.put("d",new BigNumber(d));
         values.put("e",new BigNumber(e));
         exception = assertThrows(ArithmeticAppException.class,
-                () -> expressionEvaluation(computePostFixPolishNotation(expression2), values));
+                () -> expressionEvaluation(computePostFixPolishNotation(expression2), values, false));
         expectedMessage = "Division by 0";
         assertTrue(exception.getMessage().contains(expectedMessage));
-
     }
 
     @Test
-    void run2()
-    {
+    void run2() throws Exception {
         String expression = "<expression>\n" +
                 "\t<variable> a </variable>\n" +
                 "\t  <operation> * </operation>\n" +
@@ -98,14 +99,18 @@ public class ExpressionTest {
                 "\t<variable> (0.5) </variable>\n" +
                 "\t<operation> + </operation>\n" +
                 "\t<variable> d </variable>\n" +
-                "<variableValue> a </variableValue>" +
-                "<value>134454</value>" +
-                "   <variableValue> b </variableValue>" +
-                "       <value> 23412 </value>" +
-                "<variableValue> d  " +
-                "</variableValue>" +
-                "<value> 2312321553235235 " +
-                "</value>";
+                "<variableValue> a </variableValue>\n" +
+                "<value>134454</value>\n" +
+                "   <variableValue> b </variableValue>\n" +
+                "       <value> 23412 </value>\n" +
+                "<variableValue> c  \n" +
+                "</variableValue>\n" +
+                "<value> 123 \n" +
+                "</value>\n" +
+                "<variableValue> d  \n" +
+                "</variableValue>\n" +
+                "<value> 2312321553235235 \n" +
+                "</value>\n";
         System.out.println(expression);
         System.out.println("-------");
         Tuple<String,Hashtable<String,BigNumber>> result =  XMLParser.GetExpressionFromXML(expression);
@@ -113,7 +118,19 @@ public class ExpressionTest {
 
         for (String key: result.second.keySet()) {
             System.out.println(key + " = " + result.second.get(key)  );
-
         }
+
+        long a = 23412, b = 134454, c = 123, d = 2312321553235235L;
+        assertEquals(compare(
+                expressionEvaluation(computePostFixPolishNotation(result.first), result.second, true),
+                (long) (Math.sqrt(a * b + c) + d)
+        ), 0);
+        System.out.println(ExpressionEvaluation.getResponse().toString());
+        AppException exception = assertThrows(ParsingException.class,
+                () -> computePostFixPolishNotation(expression));
+        String expectedMessage = "Imput expresion has invalid character";
+        System.out.println(exception.getMessage());
+        assertTrue(exception.getMessage().contains(expectedMessage));
+
     }
 }
