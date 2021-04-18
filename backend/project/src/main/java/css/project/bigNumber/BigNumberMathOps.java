@@ -241,7 +241,7 @@ public class BigNumberMathOps {
     public static BigNumber pow(BigNumber a, BigNumber b) {
         if (compare(b, 0) == 0)
             if (compare(a, 0) == 0)
-                throw new ArithmeticAppException("Substract result Negative");
+                throw new ArithmeticAppException("0 ^ 0 is not defined");
             else
                 return new BigNumber(1);
 
@@ -267,7 +267,7 @@ public class BigNumberMathOps {
     public static BigNumber pow(BigNumber a, long b) {
         if (b == 0)
             if (compare(a, 0) == 0)
-                throw new ArithmeticAppException("Substract result Negative");
+                throw new ArithmeticAppException("0 ^ 0 is not defined");
             else
                 return new BigNumber(1);
         // 0 ^ 0 = anything ^ 0 = 1

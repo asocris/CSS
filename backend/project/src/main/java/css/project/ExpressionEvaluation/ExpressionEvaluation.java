@@ -1,7 +1,7 @@
 package css.project.ExpressionEvaluation;
 
 import css.project.bigNumber.BigNumber;
-import css.project.bigNumber.BigNumberMathOps;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Stack;
 
 import static css.project.bigNumber.BigNumberMathOps.*;
-import static java.lang.Integer.min;
 
 public class ExpressionEvaluation {
+    @Getter
+    public static StringBuilder response;
 
     private static List<String> parseInput(String inputExpression) {
         List<String> result = new ArrayList<String>();
@@ -129,6 +130,7 @@ public class ExpressionEvaluation {
     public static BigNumber expressionEvaluation( List<String> expression, Hashtable<String, BigNumber> values ) {
         BigNumber result = new BigNumber();
         Stack<String> stack = new Stack<>();
+        response = new StringBuilder();
         int position = 0;
 
         while ( position < expression.size() ) {
@@ -144,6 +146,7 @@ public class ExpressionEvaluation {
                     BigNumber var1Value = new BigNumber(var1);
                     if (var2.equals("(0.5)")) {
                         result = sqrt(var1Value);
+                        response.append("sqrt(").append(var1Value).append(")").append("\n");
                         System.out.println("sqrt(" + var1Value + ")");
                     }
                     else {
@@ -168,13 +171,18 @@ public class ExpressionEvaluation {
                             default:
                                 break;
                         }
+                        response.append(var1Value).append(" ").append(expression.get(position))
+                                .append(" ").append(var2Value).append("\n");
                         System.out.println(var1Value + " " + expression.get(position) + " " + var2Value);
                     }
                     stack.push( result.toString() );
+                    response.append("Result = ").append(result).append("\n");
+
                     System.out.println("Result = " + result);
                 }
             position++;
         }
+        response.append("Final response : \n").append(stack.peek());
         return new BigNumber(stack.pop());
     }
 }

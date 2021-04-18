@@ -87,23 +87,18 @@ public class ExpressionTest {
     void run2()
     {
         String expression = "<expression>\n" +
-                "\t\t<variable> a </variable>\n" +
-                "\t\t  <operation> * </operation>\n" +
-                "\t\t<variable> b </variable>\n" +
-                "\t\t<operation> + </operation>\n" +
-                "\t\t<variable> c </variable>\n" +
-                "\t</expression>\n" +
-                "\t\t<operation> ^ </operation>\n" +
-                "\t\t<variable> (0.5) </variable>\n" +
-                "\t\t<operation> + </operation>\n" +
-                "\t\t<expression>\n" +
-                "\t\t<operation> / </operation>\n" +
-                "\t\t<variable> (0.5) </variable>\n" +
-                "\t\t<operation> - </operation>\n" +
-                "\t\t<variable> d </variable>\n" +
-                "\t\t<expression> </expression>\n" +
-                "\t\t</expression>\n" +
-                "\t<operation> + </operation>";
+                "\t<variable> a </variable>\n" +
+                "\t  <operation> * </operation>\n" +
+                "\t<variable> b </variable>\n" +
+                "\t<operation> + </operation>\n" +
+                "\t<variable> c </variable>\n" +
+                "</expression>\n" +
+                "\t<operation> ^ </operation>\n" +
+                "\t<variable> (0.5) </variable>\n" +
+                "\t<operation> + </operation>\n" +
+                "\t<variable> d </variable>\n";
+        System.out.println(expression);
+        System.out.println("-------");
         System.out.println(XMLParser.GetExpressionFromXML(expression));
     }
 }

@@ -15,20 +15,16 @@ public class XMLParser {
         int currentCharacterPosition = 0;
         StringBuilder expression = new StringBuilder();
 
-        while(currentCharacterPosition < xmlContent.length())
-        {
-            if(xmlContent.charAt(currentCharacterPosition) == '<')
-                {
+        while (currentCharacterPosition < xmlContent.length()) {
+            if (xmlContent.charAt(currentCharacterPosition) == '<')  {
                     StringBuilder tag = new StringBuilder();
                     currentCharacterPosition++;
-                    while( xmlContent.charAt(currentCharacterPosition)!= '>')
-                    {
+                    while ( xmlContent.charAt(currentCharacterPosition)!= '>') {
                         tag.append(xmlContent.charAt(currentCharacterPosition));
                         currentCharacterPosition++;
                     }
                     currentCharacterPosition++;
-                    switch(tag.toString())
-                    {
+                    switch(tag.toString()) {
                         case "expression":
                             expression.append("(");
                             break;
@@ -40,21 +36,18 @@ public class XMLParser {
                             currentCharacterPosition+=13; // jumping over </expression>
                             break;
                         case "variable":
-                            if(xmlContent.charAt(currentCharacterPosition) == '(') // case "(0.5)"
-                            {
+                            if(xmlContent.charAt(currentCharacterPosition) == '(') { // case "(0.5)"
                                 expression.append("(0.5)");
                                 currentCharacterPosition += 16; //jumping over (0.5)</variable>
                             }
-                            else
-                            {
+                            else {
                                 expression.append(xmlContent.charAt(currentCharacterPosition));
-                                currentCharacterPosition +=12; //jumping over
+                                currentCharacterPosition += 12; //jumping over
                                 break;
                             }
                         default:
                             break;
                     }
-
                 }
         }
         return expression.toString();
