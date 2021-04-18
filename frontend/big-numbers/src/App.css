@@ -88,3 +88,30 @@ textarea {
     border: 1px solid var(--big);
     border-radius: 7px;
 }
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+#upload-xml {
+    background-color: transparent;
+    border: 1px solid var(--big);
+    color: var(--big);
+    padding: 0.4rem 0.5rem;
+    font-family: inherit;
+    line-height: 1.5;
+    font-size: 1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 400;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#upload-xml:hover {
+    background-color: var(--big);
+    border: 1px solid var(--big);
+    color: white;
+}

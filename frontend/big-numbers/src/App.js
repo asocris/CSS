@@ -29,6 +29,11 @@ function App() {
     }, []);
 
 
+    useEffect(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+    }, [result]);
+
+
     const uniqueValues = arr => arr.filter((v, i, a) => a.indexOf(v) === i);
 
 
@@ -69,7 +74,6 @@ function App() {
             }
             setVariables(newVariables);
         }
-        setResult(input);
         setCanCompute(true);
     };
 
@@ -181,12 +185,45 @@ function App() {
             .then(d => d.text())
             .then(res => {
                 console.log(res);
-                alert.success(res);
+                setResult(res);
             })
             .catch(err => {
                 console.log(err);
                 alert.error(err.message || err.Message);
             })
+    };
+
+
+    const computeXml = xmlContent => {
+        fetch("http://localhost:8080/xml", {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: xmlContent
+        })
+            .then(d => d.text())
+            .then(res => {
+                console.log(res);
+                setResult(res);
+            })
+            .catch(err => {
+                console.log(err);
+                alert.error(err.message || err.Message);
+            })
+    };
+
+
+    const uploadXml = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener('load', function (e) {
+            const xmlContent = e.target.result;
+            computeXml(xmlContent);
+        });
+
+        reader.readAsText(file);
     };
 
     return (
@@ -196,7 +233,8 @@ function App() {
             </nav>
             <div id="main">
                 <div style={{textAlign: 'right'}}>
-                    <button className="btn btn-outline-info ml-auto">Upload XML</button>
+                    <input type="file" accept="text/xml" id="actual-btn" onChange={uploadXml} hidden/>
+                    <label id="upload-xml" htmlFor="actual-btn">Upload XML</label>
                 </div>
                 <div style={{height: '50vh', marginTop: '100px'}} className="text-center w-100 ">
                     <form id="numbers-form" onSubmit={submitForm} spellCheck="false">
@@ -216,7 +254,8 @@ function App() {
                         <div className="text-right">
                             <button className="btn btn-info" type="submit" disabled={!canCompute}>Compute</button>
                         </div>
-                        <h4 style={{marginTop: '20px', borderBottom: '5px solid black', width: 'fit-content'}}>Result is: {result}</h4>
+                        <h4 style={{marginTop: '20px', borderBottom: '5px solid black', width: 'fit-content'}}>Results are:</h4>
+                        <pre className="text-left">{result}</pre>
                     </form>
 
 
