@@ -232,10 +232,13 @@ function App() {
                 <h2>BIG numbers</h2>
             </nav>
             <div id="main">
-                <div style={{textAlign: 'right'}}>
-                    <input type="file" accept="text/xml" id="actual-btn" onChange={uploadXml} hidden/>
-                    <label id="upload-xml" htmlFor="actual-btn">Upload XML</label>
+                <div className="w-100 text-center">
+                    <div style={{textAlign: 'right', width: '70%', margin: 'auto'}}>
+                        <input type="file" accept="text/xml" id="actual-btn" onChange={uploadXml} hidden/>
+                        <label id="upload-xml" htmlFor="actual-btn">Upload XML</label>
+                    </div>
                 </div>
+
                 <div style={{height: '50vh', marginTop: '100px'}} className="text-center w-100 ">
                     <form id="numbers-form" onSubmit={submitForm} spellCheck="false">
                         <textarea id="inputBox" onChange={inputChange}/>
