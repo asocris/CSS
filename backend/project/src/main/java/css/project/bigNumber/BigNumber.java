@@ -7,9 +7,9 @@ import lombok.Getter;
 public class BigNumber {
 
     @Getter
-    private static long BASE = 10;
+    private static long BASE = 1000000000;
 
-    private static int nrDigitsPerPosition = 1;
+    private static int nrDigitsPerPosition = 9;
     //IMPORTANT NOTE : IF BASE IS CHANGED, ALL NUMBERS ARE INVALIDATED
     //IMPORTANT NOTE 2 : FOR NOW IT ONLY WORKS WITH POWERS OF 10
     // Max value : 1 << 32 - 1 (ideally max should be 1e9, or even 1e8 for safe operations)
@@ -19,18 +19,18 @@ public class BigNumber {
 
     public static void updateBASE(long newBASE) {
         if (newBASE < 10) {
-            BASE = 10;
-            System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 10");
-            nrDigitsPerPosition = 1;
+            BASE = 1000000000;
+            System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 1000000000");
+            nrDigitsPerPosition = 9;
             return;
         }
         BASE = newBASE;
         nrDigitsPerPosition = 0;
         for (long i = BASE; i > 0; i /= 10) {
             if (i % 10 != 0 && i != 1) {
-                BASE = 10;
-                System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 10");
-                nrDigitsPerPosition = 1;
+                BASE = 1000000000;
+                System.out.println("WARNING!!! base must be a multiple of 10. Using BASE value of 1000000000");
+                nrDigitsPerPosition = 9;
                 return;
             }
             nrDigitsPerPosition++;
@@ -130,7 +130,7 @@ public class BigNumber {
         if (position != length)
             number[position]++;
         else {
-            //disclamer : the numbers are reversed (like are in the real)
+            //disclaimer : the numbers are reversed (like are in the real)
             // meaning they are read (as "digits" for big number) from right to left
             // 123 456 is the real number 456123
             //in this case the number is like 9999 9999 9999 .... 9999
@@ -157,11 +157,11 @@ public class BigNumber {
             }
         }
         else {
-            //disclamer : the numbers are reversed (like are in the real)
+            //disclaimer : the numbers are reversed (like are in the real)
             // meaning they are read (as "digits" for big number) from right to left
             // 123 456 is the real number 456123
             //in this case the number is like 0000 0000 .....0000 1
-            //so - 1 would be 9999 9999 9999 .... 9999
+            //so - 1 would be 9999 9999  .... 9999
 
             if (number[length - 1] == 0)
                 throw new ArithmeticAppException("Decrementation of number 0 detected. Error!");
