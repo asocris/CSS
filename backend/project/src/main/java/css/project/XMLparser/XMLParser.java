@@ -2,6 +2,8 @@ package css.project.XMLparser;
 
 import css.project.Utils.Tuple;
 import css.project.bigNumber.BigNumber;
+import css.project.exception.custom.ParsingException;
+
 import java.util.Hashtable;
 
 public class XMLParser {
@@ -68,6 +70,8 @@ public class XMLParser {
                             break;
                     }
                 }
+            else
+                throw new ParsingException("A tag is not properly closed or written");
         }
         return new Tuple<String,Hashtable<String, BigNumber>>(expression.toString(), values);
     }

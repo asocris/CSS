@@ -10,7 +10,9 @@ import css.project.exception.custom.ParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import static css.project.ExpressionEvaluation.ExpressionEvaluation.*;
 import static css.project.bigNumber.BigNumberMathOps.compare;
@@ -84,6 +86,68 @@ public class ExpressionTest {
                 () -> expressionEvaluation(computePostFixPolishNotation(expression2), values, false));
         expectedMessage = "Division by 0";
         assertTrue(exception.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void When_IsCharacter_And_Given_Character_Then_True()
+    {
+        String input = "a";
+        var result = ExpressionEvaluation.isVariable(input);
+        assertTrue(result == true);
+    }
+
+    @Test
+    void When_IsCharacter_And_Given_Sqrt_Then_True()
+    {
+        String input = "(0.5)";
+        var result = ExpressionEvaluation.isVariable(input);
+        assertTrue(result == true);
+    }
+
+    @Test
+    void When_IsCharacter_And_Given_NonCharacter_Then_False()
+    {
+        String input = "105+";
+        var result = ExpressionEvaluation.isVariable(input);
+        assertTrue(result == false);
+    }
+
+    @Test
+    void When_ComputePostfixPolishNotation_And_Given_InvalidCharacter_Then_Exception()
+    {
+        String input = "(a+b)+z^$+c";
+        var exception = assertThrows(ParsingException.class,() -> computePostFixPolishNotation(input));
+        var  expectedMessage = "Imput expresion has invalid character: $ at position: 9";
+        assertTrue(exception.getMessage().contains(expectedMessage));
+    }
+
+    @Test
+    void When_ComputePostfixPolishNotation_And_Given_ValidInputExpression_Then_PostfixPolishNotation() throws Exception {
+
+        String input = "a - b * c /  (d + e)^f^g";
+
+        var expectedResult = new ArrayList<String>();
+        expectedResult.add("a");
+        expectedResult.add("b");
+        expectedResult.add("c");
+        expectedResult.add("*");
+        expectedResult.add("d");
+        expectedResult.add("e");
+        expectedResult.add("+");
+        expectedResult.add("f");
+        expectedResult.add("^");
+        expectedResult.add("g");
+        expectedResult.add("^");
+        expectedResult.add("/");
+        expectedResult.add("-");
+
+        var result = computePostFixPolishNotation(input);
+        int k = 0;
+
+        for (var e: expectedResult) {
+            assertTrue(e.equals(result.get(k)));
+            k++;
+        }
     }
 
     @Test

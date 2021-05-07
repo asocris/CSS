@@ -51,13 +51,16 @@ public class ExpressionEvaluation {
                     || input.charAt(0) >= 'A' && input.charAt(0) <= 'Z'))
             return true;
 
-        if (input.length() > 1) //sqrt variabile (0.5) case
+        if (input.equals("(0.5)")) //sqrt variabile (0.5) case
             return true;
 
         return false;
     }
 
-    public static List<String> computePostFixPolishNotation(String inputExpression) throws Exception {
+    public static List<String> computePostFixPolishNotation(String inputExpressionNotTrimmed) throws Exception {
+        String inputExpression = inputExpressionNotTrimmed.replaceAll("\\s+","")
+                .replaceAll("\\n+","")
+                .replaceAll("\\r+","");
         List<String> inputCharacters = parseInput(inputExpression);
         List<String> postFix = new ArrayList<>();
         Stack<String> stack = new Stack<>();
