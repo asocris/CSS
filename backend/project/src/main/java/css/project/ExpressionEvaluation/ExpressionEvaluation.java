@@ -15,7 +15,7 @@ public class ExpressionEvaluation {
     @Getter
     public static StringBuilder response;
 
-    private static List<String> parseInput(String inputExpression) {
+    public static List<String> parseInput(String inputExpression) {
         List<String> result = new ArrayList<String>();
         int position = 0;
 

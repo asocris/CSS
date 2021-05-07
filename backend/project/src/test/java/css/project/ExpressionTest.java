@@ -113,6 +113,30 @@ public class ExpressionTest {
     }
 
     @Test
+    void When_ParseInput_And_GivenRightInput_Then_List_With_Input_Items()
+    {
+        String input = "(a+b)+f^(0.5)";
+        var expectedResult = new ArrayList<String>();
+        expectedResult.add("(");
+        expectedResult.add("a");
+        expectedResult.add("+");
+        expectedResult.add("b");
+        expectedResult.add(")");
+        expectedResult.add("+");
+        expectedResult.add("f");
+        expectedResult.add("^");
+        expectedResult.add("(0.5)");
+
+        var result = ExpressionEvaluation.parseInput(input);
+        int k = 0;
+
+        for (var e: expectedResult) {
+            assertTrue(e.equals(result.get(k)));
+            k++;
+        }
+    }
+
+    @Test
     void When_ComputePostfixPolishNotation_And_Given_InvalidCharacter_Then_Exception()
     {
         String input = "(a+b)+z^$+c";
