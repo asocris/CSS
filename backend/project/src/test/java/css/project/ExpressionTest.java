@@ -91,30 +91,40 @@ public class ExpressionTest {
     @Test
     void When_IsCharacter_And_Given_Character_Then_True()
     {
+        //arrange
         String input = "a";
+        //act
         var result = ExpressionEvaluation.isVariable(input);
+        //assert
         assertTrue(result == true);
     }
 
     @Test
     void When_IsCharacter_And_Given_Sqrt_Then_True()
     {
+        //arrange
         String input = "(0.5)";
+        //act
         var result = ExpressionEvaluation.isVariable(input);
+        //assert
         assertTrue(result == true);
     }
 
     @Test
     void When_IsCharacter_And_Given_NonCharacter_Then_False()
     {
+        //arrange
         String input = "105+";
+        //act
         var result = ExpressionEvaluation.isVariable(input);
+        //assert
         assertTrue(result == false);
     }
 
     @Test
     void When_ParseInput_And_GivenRightInput_Then_List_With_Input_Items()
     {
+        //arrange
         String input = "(a+b)+f^(0.5)";
         var expectedResult = new ArrayList<String>();
         expectedResult.add("(");
@@ -127,9 +137,11 @@ public class ExpressionTest {
         expectedResult.add("^");
         expectedResult.add("(0.5)");
 
+        //act
         var result = ExpressionEvaluation.parseInput(input);
-        int k = 0;
 
+        //assert
+        int k = 0;
         for (var e: expectedResult) {
             assertTrue(e.equals(result.get(k)));
             k++;
@@ -138,8 +150,10 @@ public class ExpressionTest {
 
     @Test
     void When_ComputePostfixPolishNotation_And_Given_InvalidCharacter_Then_Exception()
-    {
+    {   //arrange
         String input = "(a+b)+z^$+c";
+
+        //act&assert
         var exception = assertThrows(ParsingException.class,() -> computePostFixPolishNotation(input));
         var  expectedMessage = "Imput expresion has invalid character: $ at position: 9";
         assertTrue(exception.getMessage().contains(expectedMessage));
@@ -147,7 +161,7 @@ public class ExpressionTest {
 
     @Test
     void When_ComputePostfixPolishNotation_And_Given_ValidInputExpression_Then_PostfixPolishNotation() throws Exception {
-
+        //arrange
         String input = "a - b * c /  (d + e)^f^g";
 
         var expectedResult = new ArrayList<String>();
@@ -165,9 +179,11 @@ public class ExpressionTest {
         expectedResult.add("/");
         expectedResult.add("-");
 
+        //act
         var result = computePostFixPolishNotation(input);
-        int k = 0;
 
+        //assert
+        int k = 0;
         for (var e: expectedResult) {
             assertTrue(e.equals(result.get(k)));
             k++;

@@ -20,6 +20,7 @@ public class XMLParserTests {
 
     @Test
     void When_InvalidXMLExpresion_Then_Exception() {
+        //arrange
         String expression = "<expression>\n" +
                 "\t<variable> a </variable>\n" +
                 "\t  <operation> * </operation>\n" +
@@ -44,6 +45,7 @@ public class XMLParserTests {
                 "<value> 2312321553235235 \n" +
                 "</value>\n";
 
+        //act&assert
         var exception = assertThrows(ParsingException.class,() -> XMLParser.GetExpressionFromXML(expression));
         var  expectedMessage = "A tag is not properly closed or written";
         assertTrue(exception.getMessage().contains(expectedMessage));
@@ -51,6 +53,7 @@ public class XMLParserTests {
 
     @Test
     void When_ValidXMLExpresion_Then_An_Expression_Is_Created() {
+        //arrange
         String expression = "<expression>\n" +
                 "\t<variable> a </variable>\n" +
                 "\t  <operation> * </operation>\n" +
@@ -74,9 +77,9 @@ public class XMLParserTests {
                 "</variableValue>\n" +
                 "<value> 2312321553235235 \n" +
                 "</value>\n";
-
+        //act
         var result = XMLParser.GetExpressionFromXML(expression);
-
+        //assert
         assertTrue(result.first.equals("(a*b+c)^(0.5)+d"));
     }
 }
