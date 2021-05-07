@@ -15,6 +15,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestRemaining {
+
     @Test
     void testTestController() {
         assertEquals(new TestController(new TestService()).readTest().getMsg(), "test");

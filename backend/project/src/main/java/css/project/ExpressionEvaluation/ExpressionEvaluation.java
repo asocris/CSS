@@ -158,7 +158,7 @@ public class ExpressionEvaluation {
                                 result = add(var1Value, var2Value);
                                 break;
                             case "-":
-                                result = substract(var1Value, var2Value);
+                                result = subtract(var1Value, var2Value);
                                 break;
                             case "*":
                                 result = multiply(var1Value, var2Value);

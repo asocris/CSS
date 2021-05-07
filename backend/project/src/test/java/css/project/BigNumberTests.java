@@ -2,289 +2,105 @@ package css.project;
 
 import css.project.bigNumber.BigNumber;
 import css.project.exception.custom.ArithmeticAppException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static css.project.bigNumber.BigNumberMathOps.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BigNumberTests {
-	@AfterEach
-	void setup() {
-		BigNumber.updateBASE(10);
-	}
+public class BigNumberTests {
+    @Test
+    void Test_StringConstructor_And_LongConstructor_Then_ToLong() {
+        BigNumber.updateBASE(2);
+        BigNumber.updateBASE(15);
+        BigNumber.updateBASE(1000);
+        String[] nr1 = {"31600", "123456789", "210", "0", "9999", "00010000", "32769", "100", "10", "50"};
+        BigNumber nr;
+        for (String s : nr1) {
+            nr = new BigNumber(s);
+            assertEquals(nr.toLong(), Long.parseLong(s));
+            nr = new BigNumber(Long.parseLong(s));
+            assertEquals(nr.toLong(), Long.parseLong(s));
+        }
 
-	@Test
-	void TestConstructor() {
-		BigNumber.updateBASE(2);
-		BigNumber.updateBASE(15);
-		BigNumber.updateBASE(1000);
-		String[] nr1 = {"31600", "123456789", "210", "0", "9999", "00010000", "32769", "100", "10", "50"};
-		BigNumber nr;
-		for (String s : nr1) {
-			nr = new BigNumber(s);
-			assertEquals(nr.toLong(), Long.parseLong(s));
-			nr = new BigNumber(Long.parseLong(s));
-			assertEquals(nr.toLong(), Long.parseLong(s));
-		}
+        ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
+                () -> new BigNumber("123a"));
+        assertTrue(exception.getMessage().contains("Big Number Parse Failure"));
+    }
 
-		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-				() -> new BigNumber("123a"));
-		assertTrue(exception.getMessage().contains("Big Number Parse Failure"));
-	}
+    @ParameterizedTest
+    @ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
+    void Test_StringConstructor_And_LongConstructor_Then_ToString(long base) {
+        BigNumber.updateBASE(base);
+        String[] nr1 = {"32769", "31600", "123456789", "210", "0", "9999", "10000", "32769", "10010010000001", "10", "50"};
+        BigNumber nr;
+        for (String s : nr1) {
+            nr = new BigNumber(s);
+            assertEquals(nr.toString().compareTo(s), 0);
+            nr = new BigNumber(Long.parseLong(s));
+            assertEquals(nr.toString().compareTo(s), 0);
+        }
+    }
 
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestToString(long base) {
-		BigNumber.updateBASE(base);
-		String[] nr1 = {"32769", "31600", "123456789", "210", "0", "9999", "10000", "32769", "10010010000001", "10", "50"};
-		BigNumber nr;
-		for (String s : nr1) {
-			nr = new BigNumber(s);
-			assertEquals(nr.toString().compareTo(s), 0);
-			nr = new BigNumber(Long.parseLong(s));
-			assertEquals(nr.toString().compareTo(s), 0);
-		}
-	}
+    @Test
+    void Test_Increment_Decrement_UpdateBase_IncreaseLength_MultiplyByBase_DivideByBase() {
+        BigNumber.updateBASE(10);
+        BigNumber nr = new BigNumber(0);
+        nr.adjustLength();
+        assertEquals(nr.toLong(),
+                0);
 
-	@Test
-	void TestUtils() {
-		BigNumber.updateBASE(10);
-		BigNumber nr = new BigNumber(0);
-		nr.adjustLength();
-		assertEquals(nr.toLong(),
-				0);
+        nr.increaseLength(15);
+        nr.increaseLength(10);
+        assertEquals(nr.getLength(), 15);
 
-		nr.increaseLength(15);
-		nr.increaseLength(10);
-		assertEquals(nr.getLength(), 15);
+        nr = new BigNumber(15);
+        int[] nrs = {2, 0, -1};
+        long[] result =  {15000, 15000, 15000};
+        nr.multiplyByBase();
+        assertEquals(nr.toLong(), 150);
+        for (int i = 0; i < result.length; i++) {
+            nr.multiplyByBase(nrs[i]);
+            assertEquals(nr.toLong(), result[i]);
+        }
 
-		nr = new BigNumber(15);
-		int[] nrs = {2, 0, -1};
-		long[] result =  {15000, 15000, 15000};
-		nr.multiplyByBase();
-		assertEquals(nr.toLong(), 150);
-		for (int i = 0; i < result.length; i++) {
-			nr.multiplyByBase(nrs[i]);
-			assertEquals(nr.toLong(), result[i]);
-		}
+        nr = new BigNumber(15);
+        nr.increaseLength(10);
+        nr.multiplyByBase();
+        assertEquals(nr.toLong(), 150);
+        for (int i = 0; i < result.length; i++) {
+            nr.multiplyByBase(nrs[i]);
+            assertEquals(nr.toLong(), result[i]);
+        }
 
-		nr = new BigNumber(15);
-		nr.increaseLength(10);
-		nr.multiplyByBase();
-		assertEquals(nr.toLong(), 150);
-		for (int i = 0; i < result.length; i++) {
-			nr.multiplyByBase(nrs[i]);
-			assertEquals(nr.toLong(), result[i]);
-		}
+        nr = new BigNumber(15000);
+        nrs = new int[]{2, 0, -1, 1};
+        result = new long[]{15, 15, 15, 1};
+        nr.divideByBase();
+        assertEquals(nr.toLong(), 1500);
+        for (int i = 0; i < result.length; i++) {
+            nr.divideByBase(nrs[i]);
+            assertEquals(nr.toLong(), result[i]);
+        }
 
-		nr = new BigNumber(15000);
-		nrs = new int[]{2, 0, -1, 1};
-		result = new long[]{15, 15, 15, 1};
-		nr.divideByBase();
-		assertEquals(nr.toLong(), 1500);
-		for (int i = 0; i < result.length; i++) {
-			nr.divideByBase(nrs[i]);
-			assertEquals(nr.toLong(), result[i]);
-		}
+        long[] n1 = 	{9, 99, 999, 9999, 123, 100, 2, 0, 1, 122, 2};
+        for (long it : n1)  {
+            BigNumber x = new BigNumber(it);
+            x.increment();
+            assertEquals(x.toLong(), it + 1);
+        }
 
-		long[] n1 = 	{9, 99, 999, 9999, 123, 100, 2, 0, 1, 122, 2};
-		for (long it : n1)  {
-			BigNumber x = new BigNumber(it);
-			x.increment();
-			assertEquals(x.toLong(), it + 1);
-		}
+        n1 = new long[]{20, 1, 10, 200, 999, 100, 1000, 10000000000L, 9, 99, 999, 9999, 123, 100, 2, 1, 1, 122, 2};
+        for (long it : n1)  {
+            BigNumber x = new BigNumber(it);
+            x.decrement();
+            assertEquals(x.toLong(), it - 1);
+        }
 
-		n1 = new long[]{20, 1, 10, 200, 999, 100, 1000, 10000000000L, 9, 99, 999, 9999, 123, 100, 2, 1, 1, 122, 2};
-		for (long it : n1)  {
-			//System.out.println(it);
-			BigNumber x = new BigNumber(it);
-			x.decrement();
-			assertEquals(x.toLong(), it - 1);
-		}
+        ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
+                () -> new BigNumber(0).decrement());
+        assertTrue(exception.getMessage().contains("Decrementation of number 0 detected. Error!"));
 
-		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-				() -> new BigNumber(0).decrement());
-		assertTrue(exception.getMessage().contains("Decrementation of number 0 detected. Error!"));
-
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestCompare(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = 	{123, 100, 2, 0, 1, 122, 2};
-		long[] n2 = 	{122, 2, 2, 0, 2, 123, 100};
-		int[] result =  {1, 1, 0, 0, -1, -1, -1};
-		for (int i = 0; i < result.length; i++)
-			assertEquals(compare(new BigNumber(n1[i]), new BigNumber(n2[i])),
-					result[i]);
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestAdd(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {0, 1000, 0, 99, 99, 12};
-		long[] n2 = {0, 0, 1000, 99, 1, 2};
-		for (int i = 0; i < n1.length; i++) {
-			assertEquals(add(new BigNumber(n1[i]), new BigNumber(n2[i])).toLong(),
-					n1[i] + n2[i]);
-			assertEquals(add(new BigNumber(n1[i]), n2[i]).toLong(),
-					n1[i] + n2[i]);
-		}
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestMultiply(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {0, 1000, 0, 99, 99, 12};
-		long[] n2 = {0, 0, 10000, 99, 1, 2};
-		for (int i = 0; i < n1.length; i++)
-			assertEquals(multiply(new BigNumber(n1[i]), new BigNumber(n2[i])).toLong(),
-					n1[i] * n2[i]);
-		for (int i = 0; i < n1.length; i++)
-			assertEquals(multiply(new BigNumber(n1[i]), n2[i]).toLong(),
-					n1[i] * n2[i]);
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestSubstract(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {0, 100, 15, 15, 100, 101, 101, 101};
-		long[] n2 = {0, 0, 15, 14, 1, 100, 99, 10};
-		for (int i = 0; i < n1.length; i++) {
-			assertEquals(substract(new BigNumber(n1[i]), new BigNumber(n2[i])).toLong(),
-					n1[i] - n2[i]);
-			assertEquals(substract(new BigNumber(n1[i]), n2[i]).toLong(),
-					n1[i] - n2[i]);
-		}
-
-		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-				() -> substract(new BigNumber(101), new BigNumber(10000)));
-		assertTrue(exception.getMessage().contains("Substract result Negative"));
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestDivision(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {100, 0, 100, 30, 15, 100, 101, 10001};
-		for (long l : n1)
-			assertEquals(divideBy2(new BigNumber(l)).toLong(), l / 2);
-
-		long[] n2 = {4, 10000, 1, 2, 3, 4, 5, 6, 7, 1000, 100};
-		for (long xx : n1)
-			for (long yy : n2) {
-				assertEquals(divideQutient(new BigNumber(xx), new BigNumber(yy)).toLong(), xx / yy);
-				assertEquals(divideReminder(new BigNumber(xx), new BigNumber(yy)).toLong(), xx % yy);
-				assertEquals(divideQutient(new BigNumber(xx), yy).toLong(), xx / yy);
-				assertEquals(divideReminder(new BigNumber(xx), yy).toLong(), xx % yy);
-			}
-
-		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-				() -> divideQutient(new BigNumber(10), new BigNumber(0)));
-		assertTrue(exception.getMessage().contains("Division by 0"));
-
-		exception = assertThrows(ArithmeticAppException.class,
-				() -> divideQutient(new BigNumber(0), new BigNumber(0)));
-		assertTrue(exception.getMessage().contains("Division by 0"));
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestSqrt(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {0, 100, 30, 15, 100, 101, 121, 25, 100000000, 10001};
-		for (long x : n1)
-			assertEquals(sqrt(new BigNumber(x)).toLong(), (long) (Math.sqrt(x)));
-	}
-
-	@ParameterizedTest
-	@ValueSource(longs = {-1, 10, 100, 1000, 1000000000})
-	void TestPow(long base) {
-		BigNumber.updateBASE(base);
-		long[] n1 = {0, 1, 100, 30, 15, 100, 101};
-		long[] n2 = {1, 1, 2, 5, 7};
-		for (long xx : n1)
-			for (long yy : n2) {
-				assertEquals(pow(new BigNumber(xx), new BigNumber(yy)).toLong(), Math.pow(xx, yy));
-				assertEquals(pow(new BigNumber(xx), yy).toLong(), Math.pow(xx, yy));
-			}
-		assertEquals(pow(new BigNumber(100), 0).toLong(), Math.pow(100, 0));
-		assertEquals(pow(new BigNumber(100), new BigNumber(0)).toLong(), Math.pow(100, 0));
-
-		ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
-				() -> pow(new BigNumber(0), new BigNumber(0)));
-		assertTrue(exception.getMessage().contains("0 ^ 0 is not defined"));
-		exception = assertThrows(ArithmeticAppException.class,
-				() -> pow(new BigNumber(0), 0));
-		assertTrue(exception.getMessage().contains("0 ^ 0 is not defined"));
-	}
-
-	@Test
-	@Disabled
-	void StressTest() {
-
-		BigNumber.updateBASE(1000000000);
-		int numberSize = 1000;
-		BigNumber n1 = new BigNumber("1".repeat(numberSize));
-		long constant = 2;
-		BigNumber n2 = new BigNumber(n1);
-		n1 = multiply(n1, 300);
-		for (int i = 1; i <= 2000; i++) {
-			//divideBy2(n1);
-			//multiply(n1, BigNumber.getBASE() / 2);
-			//divide(n1, constant);
-			//substract(n1, constant);
-			//add(n1, n2);
-			//substract(n1, n2);
-			//multiply(n1, n2);
-			//multiply(n1, 15);
-		}
-	}
-
-	@Test
-	@Disabled
-	void StressTest2() {
-
-		BigNumber.updateBASE(10);
-		int numberSize = 1;
-		BigNumber n1 = new BigNumber("1".repeat(numberSize));
-		long constant = 5000;
-		n1 = multiply(n1, 300);
-		for (int i = 1; i <= 5; i++) {
-			System.out.println(pow(n1, constant).getLength());
-		}
-	}
-
-	@Test
-	@Disabled
-	void StressTest3() {
-
-		BigNumber.updateBASE(1000000000);
-		int numberSize = 1;
-		BigNumber n1 = new BigNumber("1".repeat(numberSize));
-		long constant = 5000;
-		n1 = multiply(n1, 300);
-		for (int i = 1; i <= 5; i++) {
-			System.out.println(pow(n1, constant).getLength());
-		}
-	}
-
-	@Test
-	@Disabled
-	void StressTest4() {
-		BigNumber.updateBASE(10);
-		BigNumber n1 = new BigNumber(2);
-		BigNumber n2 = new BigNumber(10000);
-		n1 = pow(n1,n2);
-		System.out.println(n1);
-	}
-
+    }
 }

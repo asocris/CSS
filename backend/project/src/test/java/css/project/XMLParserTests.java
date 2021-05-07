@@ -1,19 +1,9 @@
 package css.project;
 
-import css.project.ExpressionEvaluation.ExpressionEvaluation;
-import css.project.Utils.Tuple;
 import css.project.XMLparser.XMLParser;
-import css.project.bigNumber.BigNumber;
-import css.project.exception.AppException;
-import css.project.exception.custom.ArithmeticAppException;
 import css.project.exception.custom.ParsingException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Hashtable;
-
-import static css.project.ExpressionEvaluation.ExpressionEvaluation.*;
-import static css.project.bigNumber.BigNumberMathOps.compare;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class XMLParserTests {

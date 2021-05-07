@@ -80,11 +80,11 @@ public class BigNumberMathOps {
         return result;
     }
 
-    public static BigNumber substract(BigNumber a, long b) {
-        return substract(a, new BigNumber(b));
+    public static BigNumber subtract(BigNumber a, long b) {
+        return subtract(a, new BigNumber(b));
     }
 
-    public static BigNumber substract(BigNumber a, BigNumber b) {
+    public static BigNumber subtract(BigNumber a, BigNumber b) {
         if (compare(a, b) == -1)
             throw new ArithmeticAppException("Substract result Negative");
 
@@ -184,7 +184,7 @@ public class BigNumberMathOps {
         while (compare(multiply(l, b), a) > 0)
             l.decrement();
         BigNumber quotient = new BigNumber(l);
-        BigNumber reminder = new BigNumber(substract(a, multiply(l, b)));
+        BigNumber reminder = new BigNumber(subtract(a, multiply(l, b)));
         quotient.adjustLength();
         reminder.adjustLength();
 
@@ -233,7 +233,7 @@ public class BigNumberMathOps {
             }
         }
         while (compare(multiply(l, l), a) > 0)
-            l = substract(l, 1);
+            l = subtract(l, 1);
         l.adjustLength();
         return l;
     }

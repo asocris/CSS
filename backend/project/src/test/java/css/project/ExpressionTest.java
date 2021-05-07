@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import static css.project.ExpressionEvaluation.ExpressionEvaluation.*;
 import static css.project.bigNumber.BigNumberMathOps.compare;
@@ -25,7 +24,7 @@ public class ExpressionTest {
     }
 
     @Test
-    void runCorrectExpresions() throws Exception {
+    void When_Evaluate_After_ComputePostfixPolishNotation_Given_ValidInputExpression_Then_CheckValid_Result() throws Exception {
         String expression = "a+((b)^(c))-((d+e))^(0.5)*(f)-(f/(g+h))";
         Hashtable<String, BigNumber> values = new Hashtable<>();
         long a = 1, b = 2, c = 15, d = 100000, e = 23, f = 100, g = 9, h = 1;
@@ -57,18 +56,18 @@ public class ExpressionTest {
     }
 
     @Test
-    void runWrongExpresions() {
+    void When_Evaluate_After_ComputePostfixPolishNotation_Given_ValidInputExpression_And_InvalidExpresionResult_Then_ThrowException() {
         String expression1 = "a+b^c-(d+e)^(0.5)*f-(f/(g+h))";
         Hashtable<String, BigNumber> values = new Hashtable<>();
         long a = 1, b = 2, c = 15, d = 100000, e = 23, f = 1000000000000L, g = 9, h = 1;
-        values.put("a",new BigNumber(a));
-        values.put("b",new BigNumber(b));
-        values.put("c",new BigNumber(c));
-        values.put("d",new BigNumber(d));
-        values.put("e",new BigNumber(e));
-        values.put("f",new BigNumber(f));
-        values.put("g",new BigNumber(g));
-        values.put("h",new BigNumber(h));
+        values.put("a", new BigNumber(a));
+        values.put("b", new BigNumber(b));
+        values.put("c", new BigNumber(c));
+        values.put("d", new BigNumber(d));
+        values.put("e", new BigNumber(e));
+        values.put("f", new BigNumber(f));
+        values.put("g", new BigNumber(g));
+        values.put("h", new BigNumber(h));
 
         ArithmeticAppException exception = assertThrows(ArithmeticAppException.class,
                 () -> expressionEvaluation(computePostFixPolishNotation(expression1), values, false));
@@ -192,7 +191,7 @@ public class ExpressionTest {
     }
 
     @Test
-    void run2() throws Exception {
+    void When_Evaluate_After_XMLParse_And_ComputePostfixPolishNotation_And_Given_ValidInputExpression_Then_CheckValid_Result() throws Exception {
         String expression = "<expression>\n" +
                 "\t<variable> a </variable>\n" +
                 "\t  <operation> * </operation>\n" +
@@ -230,6 +229,7 @@ public class ExpressionTest {
                 expressionEvaluation(computePostFixPolishNotation(result.first), result.second, true),
                 (long) (Math.sqrt(a * b + c) + d)
         ), 0);
+
         System.out.println(ExpressionEvaluation.getResponse().toString());
         AppException exception = assertThrows(ParsingException.class,
                 () -> computePostFixPolishNotation(expression));
