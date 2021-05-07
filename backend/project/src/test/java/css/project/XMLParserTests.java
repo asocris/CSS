@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class XMLParserTests {
 
     @Test
-    void When_InvalidXMLExpresion_Then_Exception() {
+    void When_InvalidXMLExpresion_Then_ParsingException() {
         //arrange
         String expression = "<expression>\n" +
                 "\t<variable> a </variable>\n" +

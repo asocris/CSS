@@ -122,7 +122,7 @@ public class ExpressionTest {
     }
 
     @Test
-    void When_ParseInput_And_GivenRightInput_Then_List_With_Input_Items()
+    void When_ParseInput_Then_List_With_Input_Items()
     {
         //arrange
         String input = "(a+b)+f^(0.5)";
@@ -149,8 +149,9 @@ public class ExpressionTest {
     }
 
     @Test
-    void When_ComputePostfixPolishNotation_And_Given_InvalidCharacter_Then_Exception()
-    {   //arrange
+    void When_ComputePostfixPolishNotation_And_Given_An_InvalidCharacter_Then_Exception()
+    {
+        //arrange
         String input = "(a+b)+z^$+c";
 
         //act&assert
@@ -160,7 +161,7 @@ public class ExpressionTest {
     }
 
     @Test
-    void When_ComputePostfixPolishNotation_And_Given_ValidInputExpression_Then_PostfixPolishNotation() throws Exception {
+    void When_ComputePostfixPolishNotation_And_Given_ValidInputExpression_Then_Valid_PostfixPolishNotation() throws Exception {
         //arrange
         String input = "a - b * c /  (d + e)^f^g";
 
