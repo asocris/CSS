@@ -60,6 +60,7 @@ public class BigNumberMathOps {
             transport /= BigNumber.getBASE();
         }
         result.adjustLength();
+        assert compare(result, a) >= 0 && compare(result, b) >= 0;
         return result;
     }
 
@@ -77,6 +78,7 @@ public class BigNumberMathOps {
             transport /= BigNumber.getBASE();
         }
         result.adjustLength();
+        assert compare(result, a) >= 0 && compare(result, b) >= 0;
         return result;
     }
 
@@ -87,7 +89,7 @@ public class BigNumberMathOps {
     public static BigNumber subtract(BigNumber a, BigNumber b) {
         if (compare(a, b) == -1)
             throw new ArithmeticAppException("Substract result Negative");
-
+        assert compare(a, b) >= 0;
         BigNumber result = new BigNumber(a);
         long transport = 0;
         for (int i = 0; i < a.getLength(); i++) {
@@ -115,6 +117,7 @@ public class BigNumberMathOps {
             }
         }
         result.adjustLength();
+        assert compare(a, add(result, b)) == 0;
         return result;
     }
 
@@ -130,6 +133,7 @@ public class BigNumberMathOps {
             transport /= BigNumber.getBASE();
         }
         result.adjustLength();
+        assert compare(result, a) >= 0 || compare(result, b) >= 0;
         return result;
     }
 
@@ -148,6 +152,7 @@ public class BigNumberMathOps {
                 transport /= BigNumber.getBASE();
             }
         result.adjustLength();
+        assert compare(result, a) >= 0 || compare(result, b) >= 0;
         return result;
     }
 
@@ -156,16 +161,18 @@ public class BigNumberMathOps {
         BigNumber result = multiply(a, BigNumber.getBASE() / 2);
         result.divideByBase();
         result.adjustLength();
+        assert compare(subtract(a, multiply(result, 2)), 1) <= 0;
         return result;
     }
 
     public static MutablePair<BigNumber, BigNumber> divide(BigNumber a, BigNumber b) {
+        if (compare(b, 0) == 0)
+            throw new ArithmeticAppException("Division by 0");
         if (compare(a, b) == 0)
             return new MutablePair<>(new BigNumber(1), new BigNumber());
         if (compare(a, b) < 0)
             return new MutablePair<>(new BigNumber(0), a);
-        if (compare(b, 0) == 0)
-            throw new ArithmeticAppException("Division by 0");
+        assert compare(b, 0) > 0;
         BigNumber l = new BigNumber(1);
         BigNumber r = new BigNumber(a);
         while(compare(l, r) < 0) {
@@ -187,6 +194,7 @@ public class BigNumberMathOps {
         BigNumber reminder = new BigNumber(subtract(a, multiply(l, b)));
         quotient.adjustLength();
         reminder.adjustLength();
+        assert compare(add(reminder, multiply(quotient, b)), a) == 0;
 
         return new MutablePair<>(quotient, reminder);
     }
@@ -235,6 +243,10 @@ public class BigNumberMathOps {
         while (compare(multiply(l, l), a) > 0)
             l = subtract(l, 1);
         l.adjustLength();
+        assert compare(a, multiply(l, l)) == 0 || (
+                    compare(a, multiply(l, l)) > 0 &&
+                    compare(a, multiply(add(l, 1), add(l, 1))) < 0
+                );
         return l;
     }
 
@@ -244,13 +256,15 @@ public class BigNumberMathOps {
                 throw new ArithmeticAppException("0 ^ 0 is not defined");
             else
                 return new BigNumber(1);
-
+        assert compare(a, 0) != 0 || compare(b, 0) != 0;
         if (compare(a, 2) < 0)
             return new BigNumber(a);
-        // a ^ b = a if {a = 0 (and b != 0))} or {a = 1}
+        // a ^ b = a if ({a = 0 (and b != 0))} or {a = 1})
+
         if (compare(b, 1) == 0)
             return new BigNumber(a);
         // a ^ 1 = a
+
         BigNumber tmp = new BigNumber(a);
         BigNumber result = new BigNumber(1);
         BigNumber bTemp = new BigNumber(b);
@@ -271,6 +285,7 @@ public class BigNumberMathOps {
             else
                 return new BigNumber(1);
         // 0 ^ 0 = anything ^ 0 = 1
+        assert compare(a, 0) != 0 || b != 0;
 
         if (compare(a, 2) < 0)
             return new BigNumber(a);
